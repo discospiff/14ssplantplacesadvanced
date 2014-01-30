@@ -52,4 +52,10 @@ public class Plant {
 	boolean edible;
 	boolean recommended;
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return genus + " " + species + " " + common;
+	}
+	
 }
