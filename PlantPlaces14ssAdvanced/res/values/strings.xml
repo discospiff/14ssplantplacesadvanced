@@ -4,5 +4,8 @@
     <string name="app_name">PlantPlaces14ssAdvanced</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="lblPlantName">Plant Name</string>
+    <string name="blank"></string>
+    <string name="lblSearch">Search</string>
 
 </resources>

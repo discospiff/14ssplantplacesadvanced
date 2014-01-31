@@ -3,36 +3,38 @@ package com.plantplaces.plantplaces14ssadvanced;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
-
-import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
+import android.widget.Toast;
 
 public class SearchPlantsActivity extends Activity {
 
     private TextView edtStatus;
+	private AutoCompleteTextView actPlantName;
 
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_plants);
-        // create a new plant.
-        Plant plant = new Plant();
+
+        actPlantName = (AutoCompleteTextView) findViewById(R.id.actPlantName);
         
-        plant.setGenus("Cercis");
-        plant.setSpecies("canadensis");
-        plant.setCommon("Redbud");
-        
-        // get a reference to the status text
-        edtStatus = (TextView) findViewById(R.id.edtStatus);
-        
-        String plantStatus = plant.toString();
-        
-        // put this status in the edt.
-        edtStatus.setText(plantStatus);
         
     }
 
+	/**
+	 * React to the search button being clicked.
+	 * @param v
+	 */
+	public void onSearchClicked(View v) {
+		String plantSearchText = actPlantName.getText().toString();
+		// show it in a toast.
+		Toast.makeText(this, plantSearchText, Toast.LENGTH_LONG).show();
+		
+	}
+	
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

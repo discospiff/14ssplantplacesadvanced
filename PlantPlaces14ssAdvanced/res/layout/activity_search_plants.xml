@@ -12,6 +12,27 @@
         android:id="@+id/edtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="@string/lblPlantName" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actPlantName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/edtStatus"
+        android:ems="10"
+        android:text="@string/blank" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/actPlantName"
+        android:layout_below="@+id/actPlantName"
+        android:onClick="onSearchClicked"
+        android:text="@string/lblSearch" />
 
 </RelativeLayout>
