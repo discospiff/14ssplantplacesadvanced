@@ -1,16 +1,17 @@
 package com.plantplaces.plantplaces14ssadvanced;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SearchPlantsActivity extends Activity {
 
-    private TextView edtStatus;
+    public static final String PLANT_SEARCH_TEXT = "PLANT_SEARCH_TEXT";
+	private TextView edtStatus;
 	private AutoCompleteTextView actPlantName;
 
 
@@ -30,8 +31,15 @@ public class SearchPlantsActivity extends Activity {
 	 */
 	public void onSearchClicked(View v) {
 		String plantSearchText = actPlantName.getText().toString();
-		// show it in a toast.
-		Toast.makeText(this, plantSearchText, Toast.LENGTH_LONG).show();
+		
+		// Start the PlantResultsActivity
+		Intent plantResultsIntent = new Intent(this, PlantResultsActivity.class);
+		
+		// send the search text to the PlantResultsActivity.
+		plantResultsIntent.putExtra(PLANT_SEARCH_TEXT, plantSearchText);
+		
+				// start the activity.
+		startActivity(plantResultsIntent);
 		
 	}
 	
