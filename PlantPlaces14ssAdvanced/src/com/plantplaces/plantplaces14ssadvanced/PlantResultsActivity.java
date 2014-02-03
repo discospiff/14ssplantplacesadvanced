@@ -1,14 +1,15 @@
 package com.plantplaces.plantplaces14ssadvanced;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.plantplaces.plantplaces14ssadvanced.dao.IPlantDAO;
-import com.plantplaces.plantplaces14ssadvanced.dao.PlantDAOStub;
+import com.plantplaces.plantplaces14ssadvanced.dao.OnlinePlantDAO;
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
 
 public class PlantResultsActivity extends ListActivity {
@@ -19,10 +20,7 @@ public class PlantResultsActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
-		// get access to our DAO.
-		plantDAO = new PlantDAOStub();
-		
+
 		// find the search term.
 		String plantSearchText = this.getIntent().getStringExtra(SearchPlantsActivity.PLANT_SEARCH_TEXT);
 		
@@ -32,23 +30,59 @@ public class PlantResultsActivity extends ListActivity {
 		// set the search criteria.  Assume it's common name.
 		searchPlant.setCommon(plantSearchText);
 		
-		// pass the search criteria to the PlantDAO.
-		try {
-			// get a list of plants.
-			List<Plant> allPlants = plantDAO.fetch(searchPlant);
-		
+		// create an object of our AsyncTask.
+		PlantSearchTask pst = new PlantSearchTask();
+
+		// run the plant search task in a new thread.
+		pst.execute(searchPlant);
+
+	}
+
+	class PlantSearchTask extends AsyncTask<Plant, Integer, List<Plant>> {
+
+		/**
+		 * onPostExecute is invoked when doInBackground thread completes.
+		 * onPostExecute executes on the UI thread, so it can interact with UI elements,
+		 * and update UI elements.
+		 */
+		@Override
+		protected void onPostExecute(List<Plant> allPlants) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(allPlants);
+			
 			// the lines that follow, until the catch block, will execute only if we did not get an exception.
 			
 			// make the list UI-friendly.
-			ArrayAdapter<Plant> aaPlant = new ArrayAdapter<Plant>(this, android.R.layout.simple_list_item_1, allPlants);
+			ArrayAdapter<Plant> aaPlant = new ArrayAdapter<Plant>(PlantResultsActivity.this, android.R.layout.simple_list_item_1, allPlants);
 			
 			// set the list in the list adapter.
 			setListAdapter(aaPlant);
+		}
+		
+		/**
+		 * This is the stuff that will run in its own thread.  
+		 * It's important to put the networking logic here.
+		 * THis thread does not run on the UI thread, and thus, cannot directly access UI components.
+		 */
+		@Override
+		protected List<Plant> doInBackground(Plant... searchPlant) {
+			// get access to our DAO, which will perform network operations.
+			plantDAO = new OnlinePlantDAO();
 			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Toast.makeText(this, "Unable to fetch data.", Toast.LENGTH_LONG).show();
+			// pass the search criteria to the PlantDAO.
+			try {
+				// get a list of plants.
+				List<Plant> allPlants = plantDAO.fetch(searchPlant[0]);
+			
+				return allPlants;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			//	Toast.makeText(this, "Unable to fetch data.", Toast.LENGTH_LONG).show();
+			}
+			
+			return new ArrayList<Plant>();
+			
 		}
 		
 	}
