@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 import com.plantplaces.plantplaces14ssadvanced.dao.IPlantDAO;
+import com.plantplaces.plantplaces14ssadvanced.dao.OfflinePlantDAO;
 import com.plantplaces.plantplaces14ssadvanced.dao.OnlinePlantDAO;
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
 
@@ -57,6 +58,18 @@ public class PlantResultsActivity extends ListActivity {
 			
 			// set the list in the list adapter.
 			setListAdapter(aaPlant);
+			
+			
+			// create an object of the thread class that will store plants locally.
+			SavePlants savePlants = new SavePlants();
+			// place this ArrayList in our separate thread so that we can save it.
+			savePlants.setAllPlants((ArrayList<Plant>) ((ArrayList<Plant>) allPlants).clone());
+			
+			// make a new class of type Thread that will run our thread.
+			Thread thread = new Thread(savePlants, "Local Plant Sync");
+			
+			// spawn a new thread.
+			thread.start();
 		}
 		
 		/**
@@ -83,6 +96,46 @@ public class PlantResultsActivity extends ListActivity {
 			
 			return new ArrayList<Plant>();
 			
+		}
+		
+	}
+	
+	/**
+	 * A thread that will sync data locally once it has beend downloaded from the server.
+	 * @author jonesbr
+	 *
+	 */
+	class SavePlants implements Runnable {
+
+		private List<Plant> allPlants;
+		
+		/**
+		 * This logic will run in a separate thread.
+		 */
+		@Override
+		public void run() {
+			// create an instance of OfflinePlantDAO.
+			IPlantDAO offlinePlantDAO = new OfflinePlantDAO(PlantResultsActivity.this);
+			
+			// save the collection allPlants in our local SQLite database.
+			
+			// iterate over the allPlants collection, and save them, one at a time.
+			for (Plant plant : allPlants) {
+				try {
+					offlinePlantDAO.save(plant);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		List<Plant> getAllPlants() {
+			return allPlants;
+		}
+
+		void setAllPlants(List<Plant> allPlants) {
+			this.allPlants = allPlants;
 		}
 		
 	}

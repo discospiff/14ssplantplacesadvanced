@@ -59,6 +59,7 @@ public class OnlinePlantDAO implements IPlantDAO {
 			
 			// move data from jsonPlant to plant.
 			int id = jsonPlant.getInt("id");
+			plant.setGuid(id);
 			
 			String genus = jsonPlant.getString("genus");
 			plant.setGenus(genus);

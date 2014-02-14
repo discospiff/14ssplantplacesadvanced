@@ -44,6 +44,18 @@ public class Plant {
 	public void setRecommended(boolean recommended) {
 		this.recommended = recommended;
 	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public int getGuid() {
+		return guid;
+	}
+	public void setGuid(int guid) {
+		this.guid = guid;
+	}
 	String genus;
 	String species;
 	String cultivar;
@@ -51,6 +63,10 @@ public class Plant {
 	int maxHeight;
 	boolean edible;
 	boolean recommended;
+	// local database ID
+	long id;
+	// Global Unique Identifier, from PlantPlaces.com
+	int guid;
 	
 	@Override
 	public String toString() {
