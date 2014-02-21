@@ -24,13 +24,13 @@ public class PlantResultsActivity extends ListActivity {
 
 		// find the search term.
 		String plantSearchText = this.getIntent().getStringExtra(SearchPlantsActivity.PLANT_SEARCH_TEXT);
-		
+
 		// make a new Plant object that will serve as our search criteria.
 		Plant searchPlant = new Plant();
-		
+
 		// set the search criteria.  Assume it's common name.
 		searchPlant.setCommon(plantSearchText);
-		
+
 		// create an object of our AsyncTask.
 		PlantSearchTask pst = new PlantSearchTask();
 
@@ -50,28 +50,28 @@ public class PlantResultsActivity extends ListActivity {
 		protected void onPostExecute(List<Plant> allPlants) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(allPlants);
-			
+
 			// the lines that follow, until the catch block, will execute only if we did not get an exception.
-			
+
 			// make the list UI-friendly.
 			ArrayAdapter<Plant> aaPlant = new ArrayAdapter<Plant>(PlantResultsActivity.this, android.R.layout.simple_list_item_1, allPlants);
-			
+
 			// set the list in the list adapter.
 			setListAdapter(aaPlant);
-			
-			
+
+
 			// create an object of the thread class that will store plants locally.
 			SavePlants savePlants = new SavePlants();
 			// place this ArrayList in our separate thread so that we can save it.
 			savePlants.setAllPlants((ArrayList<Plant>) ((ArrayList<Plant>) allPlants).clone());
-			
+
 			// make a new class of type Thread that will run our thread.
 			Thread thread = new Thread(savePlants, "Local Plant Sync");
-			
+
 			// spawn a new thread.
 			thread.start();
 		}
-		
+
 		/**
 		 * This is the stuff that will run in its own thread.  
 		 * It's important to put the networking logic here.
@@ -80,26 +80,27 @@ public class PlantResultsActivity extends ListActivity {
 		@Override
 		protected List<Plant> doInBackground(Plant... searchPlant) {
 			// get access to our DAO, which will perform network operations.
-			plantDAO = new OnlinePlantDAO();
-			
+			// plantDAO = new OnlinePlantDAO();
+			plantDAO = new OfflinePlantDAO(PlantResultsActivity.this);
+
 			// pass the search criteria to the PlantDAO.
 			try {
 				// get a list of plants.
 				List<Plant> allPlants = plantDAO.fetch(searchPlant[0]);
-			
+
 				return allPlants;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			//	Toast.makeText(this, "Unable to fetch data.", Toast.LENGTH_LONG).show();
+				//	Toast.makeText(this, "Unable to fetch data.", Toast.LENGTH_LONG).show();
 			}
-			
+
 			return new ArrayList<Plant>();
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * A thread that will sync data locally once it has beend downloaded from the server.
 	 * @author jonesbr
@@ -108,7 +109,7 @@ public class PlantResultsActivity extends ListActivity {
 	class SavePlants implements Runnable {
 
 		private List<Plant> allPlants;
-		
+
 		/**
 		 * This logic will run in a separate thread.
 		 */
@@ -116,13 +117,15 @@ public class PlantResultsActivity extends ListActivity {
 		public void run() {
 			// create an instance of OfflinePlantDAO.
 			IPlantDAO offlinePlantDAO = new OfflinePlantDAO(PlantResultsActivity.this);
-			
+
 			// save the collection allPlants in our local SQLite database.
-			
+
 			// iterate over the allPlants collection, and save them, one at a time.
 			for (Plant plant : allPlants) {
 				try {
-					offlinePlantDAO.save(plant);
+					if(offlinePlantDAO.fetchPlantById(plant.getGuid()) == null) {
+						offlinePlantDAO.save(plant);
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -137,7 +140,7 @@ public class PlantResultsActivity extends ListActivity {
 		void setAllPlants(List<Plant> allPlants) {
 			this.allPlants = allPlants;
 		}
-		
+
 	}
-	
+
 }
