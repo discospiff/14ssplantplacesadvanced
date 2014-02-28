@@ -1,12 +1,17 @@
 package com.plantplaces.plantplaces14ssadvanced;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+
+import com.plantplaces.plantplaces14ssadvanced.dao.OfflinePlantDAO;
 
 public class SearchPlantsActivity extends Activity {
 
@@ -22,7 +27,17 @@ public class SearchPlantsActivity extends Activity {
 
         actPlantName = (AutoCompleteTextView) findViewById(R.id.actPlantName);
         
+        // populate the autocomplete with the distinct set of names.
+        OfflinePlantDAO plantDAO = new OfflinePlantDAO(this);
         
+        // get a list of distinct names.
+        ArrayList<String> names = plantDAO.fetchDistinctNames();
+        
+        // make an ArrayAdapter, which makes this collection UI-friendly.
+        ArrayAdapter<String> aaNames = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
+
+        // add the collection to the auto complete
+        actPlantName.setAdapter(aaNames);
     }
 
 	/**

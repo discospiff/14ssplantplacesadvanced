@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
 
 public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
-	
+
 	private static final String COMMON = "COMMON";
 	private static final String CULTIVAR = "CULTIVAR";
 	private static final String SPECIES = "SPECIES";
@@ -28,7 +28,7 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 	@Override
 	public void save(Plant plant) throws Exception {
 		// Store our plants in a local SQLite database.
-		
+
 		// ContentValues is a collection of key value pairs that we will put into the database, where the key is the database column name.
 		ContentValues cv = new ContentValues();
 		cv.put(GENUS, plant.getGenus());
@@ -36,21 +36,21 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 		cv.put(CULTIVAR, plant.getCultivar());
 		cv.put(COMMON, plant.getCommon());
 		cv.put(GUID, plant.getGuid());
-		
+
 		// insert the record into the database, and it will return the local (just generated) primary key.
 		long id = getWritableDatabase().insert(PLANTS, GENUS, cv);
-		
+
 		// associat this primary key with the plant DTO object.
 		plant.setId(id);
-		
-		
+
+
 	}
 
 	@Override
 	public List<Plant> fetch(Plant searchPlant) throws Exception {
 		// create our return variable.
 		List<Plant> allPlants = new ArrayList<Plant>();
-		
+
 		// get the search term.
 		String searchTerm = searchPlant.getCommon();
 
@@ -70,10 +70,10 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 
 				// populate this plant from the cursor.
 				Plant plant = populatePlantFromCursor(cursor);
-				
+
 				// assign this plant to the collection that we will return.
 				allPlants.add(plant);
-				
+
 				// move to the next record
 				cursor.moveToNext();
 			}
@@ -86,23 +86,23 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 	public Plant fetchPlantById(int id) throws Exception {
 		// create a return variable.
 		Plant plant = null;
-		
+
 		// create a select statement.
 		String select = "SELECT * FROM " + PLANTS + " WHERE " + GUID + " = " + id;
-		
+
 		// run the query.
 		Cursor cursor = getReadableDatabase().rawQuery(select, null);
-		
+
 		// we should have only one result, since we are searching by GUID.
 		if (cursor.getCount() == 1) {
 			// move the cursor to the first line.
 			cursor.moveToFirst();
-			
+
 			plant = populatePlantFromCursor(cursor);
 		}
 		// close cursor, free up memory.
 		cursor.close();
-		
+
 		// return the variable.
 		return plant;
 	}
@@ -125,13 +125,50 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 	public void onCreate(SQLiteDatabase db) {
 		// Create the SQLite Database
 		db.execSQL("CREATE TABLE " + PLANTS + " ("+_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " + GUID + " INTEGER, " + GENUS + " TEXT, " + SPECIES + " TEXT, " + CULTIVAR + " TEXT, " + COMMON + " TEXT); ");
-		
+
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public ArrayList<String> fetchDistinctNames() {
+		// declare our return type.
+		ArrayList<String> allNames = new ArrayList<String>();
+
+		// select all 
+		String selectNames = "SELECT DISTINCT " + SPECIES + " AS NAME FROM " + PLANTS + 
+				" UNION " +
+				" SELECT DISTINCT " + GENUS + " AS NAME FROM " + PLANTS +
+				" UNION " +
+				" SELECT DISTINCT " + CULTIVAR + " AS NAME FROM " + PLANTS +
+				" UNION " +
+				" SELECT DISTINCT " + COMMON + " AS NAME FROM " + PLANTS;
+
+
+		// run the query.
+		Cursor cursor = getReadableDatabase().rawQuery(selectNames, null);
+
+		// we should have only one result, since we are searching by GUID.
+		if (cursor.getCount() > 0 ) {
+			// move the cursor to the first line.
+			cursor.moveToFirst();
+
+			// while we have more results.
+			while(!cursor.isAfterLast()){ 
+				// add this name to our collection of results.
+				allNames.add(cursor.getString(cursor.getColumnIndex("NAME")));
+				// move to the next result.
+				cursor.moveToNext();
+			}
+		}
+		// close cursor, free up memory.
+		cursor.close();				
+
+		// return results.
+		return allNames;
 	}
 
 }

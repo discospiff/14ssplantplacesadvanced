@@ -80,23 +80,33 @@ public class PlantResultsActivity extends ListActivity {
 		@Override
 		protected List<Plant> doInBackground(Plant... searchPlant) {
 			// get access to our DAO, which will perform network operations.
-			// plantDAO = new OnlinePlantDAO();
-			plantDAO = new OfflinePlantDAO(PlantResultsActivity.this);
+			return searchPlant(searchPlant);
 
+		}
+
+		private List<Plant> searchPlant(Plant... searchPlant) {
+			plantDAO = new OnlinePlantDAO();
+			List<Plant> allPlants;
+			
 			// pass the search criteria to the PlantDAO.
 			try {
 				// get a list of plants.
-				List<Plant> allPlants = plantDAO.fetch(searchPlant[0]);
-
-				return allPlants;
+				allPlants = plantDAO.fetch(searchPlant[0]);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				//	Toast.makeText(this, "Unable to fetch data.", Toast.LENGTH_LONG).show();
+				// something went wrong on the network.  Fail over to our local copy of data.
+				plantDAO = new OfflinePlantDAO(PlantResultsActivity.this);
+				// get a list of plants.
+				
+				try {
+					allPlants = plantDAO.fetch(searchPlant[0]);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					allPlants = new ArrayList<Plant>(); 
+					
+				}
 			}
-
-			return new ArrayList<Plant>();
-
+			return allPlants;
 		}
 
 	}
