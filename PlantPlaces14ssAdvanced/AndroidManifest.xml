@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="PlantResultsActivity"></activity>
+        <activity android:name="MasterDetailActivity"></activity>
     </application>
 
 </manifest>

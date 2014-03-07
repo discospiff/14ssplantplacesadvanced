@@ -7,5 +7,7 @@
     <string name="lblPlantName">Plant Name</string>
     <string name="blank"></string>
     <string name="lblSearch">Search</string>
+    <string name="lblNewSearch">New Search</string>
+    <string name="lblViewPlants">View Plants</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -65,5 +66,17 @@ public class SearchPlantsActivity extends Activity {
         getMenuInflater().inflate(R.menu.search_plants, menu);
         return true;
     }
+
     
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	if (item.getItemId() == R.id.mnuMasterDetail) {
+    		// show the master detail screen.
+    		Intent mda = new Intent(this, MasterDetailActivity.class);
+    		startActivity(mda);
+    	}
+    	
+    	// TODO Auto-generated method stub
+    	return super.onOptionsItemSelected(item);
+    }
 }
