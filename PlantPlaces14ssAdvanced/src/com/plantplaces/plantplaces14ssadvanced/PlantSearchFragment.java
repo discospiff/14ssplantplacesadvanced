@@ -21,20 +21,36 @@ public class PlantSearchFragment extends Fragment {
 		// Get access to our button.
 		Button btnSearchFragment = (Button) layout.findViewById(R.id.btnSearchFragment);
 	
-		// assign a button listener.
-		btnSearchFragment.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				int i = 1 + 1;
-			}
+//		// assign a button listener.
+//		btnSearchFragment.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				int i = 1 + 1;
+//			}
+//		
+//		});
 		
-		});
+		JeremysOnClickListener jocl = new JeremysOnClickListener();
+		
+		btnSearchFragment.setOnClickListener(jocl);
 		
 		return layout;
 		
 	}
 
+	class JeremysOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			int i = 1 + 1;
+			
+		}
+		
+	}
+	
+	
 	
 }
