@@ -74,6 +74,9 @@ public class SearchPlantsActivity extends Activity {
     		// show the master detail screen.
     		Intent mda = new Intent(this, MasterDetailActivity.class);
     		startActivity(mda);
+    	} else if (item.getItemId() == R.id.mapOfPlants) {
+    		Intent mapOfPlants = new Intent(this, MapOfPlants.class);
+    		startActivity(mapOfPlants);
     	}
     	
     	// TODO Auto-generated method stub

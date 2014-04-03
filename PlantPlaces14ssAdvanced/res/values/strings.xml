@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+  tools:ignore="MissingTranslation">
 
     <string name="app_name">PlantPlaces14ssAdvanced</string>
     <string name="action_settings">Settings</string>
@@ -9,5 +10,6 @@
     <string name="lblSearch">Search</string>
     <string name="lblNewSearch">New Search</string>
     <string name="lblViewPlants">View Plants</string>
+    <string name="mapOfPlants">Map</string>
 
 </resources>

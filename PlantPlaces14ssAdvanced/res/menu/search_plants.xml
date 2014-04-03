@@ -6,5 +6,6 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item android:id="@+id/mnuMasterDetail" android:title="@string/lblViewPlants" android:showAsAction="ifRoom"></item>
+    <item android:id="@+id/mapOfPlants" android:title="@string/mapOfPlants" android:showAsAction="ifRoom"></item>
 
 </menu>
