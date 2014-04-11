@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
+import com.plantplaces.plantplaces14ssadvanced.dto.Specimen;
 
 public class PlantDAOStub implements IPlantDAO {
 
@@ -45,6 +46,13 @@ public class PlantDAOStub implements IPlantDAO {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return super.toString();
+	}
+
+	@Override
+	public List<Specimen> fetchSpecimensByLocation(double latitude,
+			double longitude) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
+import com.plantplaces.plantplaces14ssadvanced.dto.Specimen;
 
 public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 
@@ -169,6 +170,13 @@ public class OfflinePlantDAO extends SQLiteOpenHelper implements IPlantDAO {
 
 		// return results.
 		return allNames;
+	}
+
+	@Override
+	public List<Specimen> fetchSpecimensByLocation(double latitude,
+			double longitude) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

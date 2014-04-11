@@ -3,6 +3,7 @@ package com.plantplaces.plantplaces14ssadvanced.dao;
 import java.util.List;
 
 import com.plantplaces.plantplaces14ssadvanced.dto.Plant;
+import com.plantplaces.plantplaces14ssadvanced.dto.Specimen;
 
 /**
  * Persistence methods for a Plant.
@@ -33,5 +34,15 @@ public interface IPlantDAO {
 	 * @throws Exception if anything goes wrong in the persistence layer.
 	 */
 	public Plant fetchPlantById(int id) throws Exception;
+	
+	
+	/**
+	 * Given a location, fetch nearby specimens.
+	 * @param latitude
+	 * @param longitude
+	 * @return a list of nearby specimens.
+	 * @throws Exception 
+	 */
+	public List<Specimen> fetchSpecimensByLocation(double latitude, double longitude) throws Exception;
 	
 }

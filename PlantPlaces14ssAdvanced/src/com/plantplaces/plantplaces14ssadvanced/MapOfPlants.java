@@ -1,6 +1,10 @@
 package com.plantplaces.plantplaces14ssadvanced;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
@@ -12,14 +16,21 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.plantplaces.plantplaces14ssadvanced.dao.IPlantDAO;
+import com.plantplaces.plantplaces14ssadvanced.dao.OnlinePlantDAO;
+import com.plantplaces.plantplaces14ssadvanced.dto.Specimen;
 
-public class MapOfPlants extends FragmentActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class MapOfPlants extends FragmentActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, OnInfoWindowClickListener {
 
 	private GoogleMap map;
 	private LocationRequest request = LocationRequest.create().setInterval(5000).setFastestInterval(16).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	private LocationClient locationClient;
-	
+	private IPlantDAO plantDAO;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -28,6 +39,9 @@ public class MapOfPlants extends FragmentActivity implements ConnectionCallbacks
 		// wire up with our map fragment
 		setContentView(R.layout.mapv2fragment);
 
+		// setup our plant DAO.
+		plantDAO = new OnlinePlantDAO();
+		
 		setupMapIfRequired();
 	}
 
@@ -97,6 +111,51 @@ public class MapOfPlants extends FragmentActivity implements ConnectionCallbacks
 	public void onLocationChanged(Location location) {
 		Toast.makeText(this, "Location: " + location.getLatitude() + " Longitude: " + location.getLongitude(), Toast.LENGTH_LONG).show();
 		
+		// find specimens at this location.
+		PlantSearchTask pst = new PlantSearchTask();
+		pst.execute(location.getLatitude(), location.getLongitude());
 	}
 
+	class PlantSearchTask extends AsyncTask<Double, Integer, List<Specimen>> {
+		
+		@Override
+		protected void onPostExecute(List<Specimen> result) {
+			// given a list of specimens, add markers to our map.
+			
+			// iterate over the collection of specimens.
+			for (Specimen specimen : result) {
+				// make an LatLng object to represent this position on a map.
+				LatLng position = new LatLng(specimen.getLatitude(), specimen.getLongitude());
+				map.addMarker(new MarkerOptions().position(position)
+						.title("[" + specimen.getPlantId() + "]" + specimen.getDescription())
+						.snippet(specimen.getAddress())
+						);
+			}
+		}
+
+		@Override
+		protected List<Specimen> doInBackground(Double... params) {
+			List<Specimen> allSpecimens = new ArrayList<Specimen>();
+			try {
+				allSpecimens = plantDAO.fetchSpecimensByLocation(params[0], params[1]);
+			} catch (Exception e) {
+				Toast.makeText(MapOfPlants.this, "Error getting data", Toast.LENGTH_LONG).show();
+			}
+			return allSpecimens;
+		}
+		
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		// TODO Auto-generated method stub
+		String title = marker.getTitle();
+		int indexOfOpen = title.indexOf("[");
+		int indexOfClose = title.indexOf("]");
+		// get the plant ID of the marker that was clicked.
+		String plantId = title.substring(indexOfOpen+1, indexOfClose);
+		
+		
+	}
+	
 }
